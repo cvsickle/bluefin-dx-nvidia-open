@@ -2,7 +2,8 @@
 name: Build container image
 on:
   schedule:
-    - cron: '40 9 * * *'  # 9:40am UTC everyday
+    - cron: '17 6 * * *'  # 6:17 AM ET
+      timezone: 'America/New_York'
   pull_request:
     branches:
       - main
