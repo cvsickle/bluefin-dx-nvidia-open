@@ -7,7 +7,7 @@ This repository is a custom [bootc](https://github.com/bootc-dev/bootc) image, b
 The following packages were added:
 
 - [Tmux](https://github.com/tmux/tmux)
-- Neovim (and everything for [LazyGit](https://github.com/jesseduffield/lazygit))
+- [Neovim](https://github.com/neovim/neovim) (and everything for [LazyGit](https://github.com/jesseduffield/lazygit))
 - [Helium Browser](https://github.com/imputnet/helium)
 
 # Community
