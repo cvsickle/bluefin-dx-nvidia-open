@@ -19,19 +19,34 @@ dnf5 -y install \
   neovim \
   git \
   lazygit \
+  tree-sitter-cli \
+  fzf \
   ripgrep \
   fd-find \
-  tree-sitter-cli \
   gcc \
   gcc-c++ \
-  curl
+  curl \
+  make \
+  unzip \
+  xz
 dnf5 -y copr disable dejan/lazygit
+
+# Install JetBrains Mono Nerd Font from the official Nerd Fonts release.
+font_archive="JetBrainsMono.tar.xz"
+font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${font_archive}"
+font_dir="/usr/share/fonts/jetbrains-mono-nerd-fonts"
+
+curl -fL --retry 3 -o "/tmp/${font_archive}" "${font_url}"
+install -d "${font_dir}"
+tar -xJf "/tmp/${font_archive}" -C "${font_dir}"
+find "${font_dir}" -type f \( -name '*.ttf' -o -name '*.otf' \) -exec chmod 0644 {} +
+rm -f "/tmp/${font_archive}"
+fc-cache -f "${font_dir}"
 
 # Install Helium browser
 dnf5 -y copr enable imput/helium
 dnf5 -y install helium-bin
 dnf5 -y copr disable imput/helium
-
 
 #### Example for enabling a System Unit File
 
