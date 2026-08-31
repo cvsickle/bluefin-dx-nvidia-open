@@ -1,23 +1,29 @@
 ---
 name: Build container image
 on:
+  schedule:
+    - cron: '40 9 * * *'  # 9:40am UTC everyday
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: '05 10 * * *'  # 10:05am UTC everyday
+    paths-ignore:
+      - "**.md"
+      - ".devcontainer/**"
+      - ".github/workflows/sync_codeberg.yaml"
   push:
     branches:
       - main
     paths-ignore:
-      - '**/README.md'
-  workflow_dispatch:
+      - "**.md"
+      - ".devcontainer/**"
+      - ".github/workflows/sync_codeberg.yaml"
+  workflow_dispatch: # allow manually triggering builds
 
 env:
   IMAGE_REGISTRY: "ghcr.io/${{ github.repository_owner }}"  # do not edit
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name}}-${{ inputs.stream_name }}
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}-${{ inputs.brand_name }}-${{ inputs.stream_name }}
   cancel-in-progress: true
 
 jobs:
