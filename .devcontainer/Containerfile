@@ -12,7 +12,16 @@ RUN apt-get update && apt-get install -y \
     bash-completion \
     && rm -rf /var/lib/apt/lists/*
 
+# The apt-provided `just` package on Ubuntu 24.04 is too old (1.21.x) to
+# support attributes like [group('...')] used in this repo's Justfile.
+# Install the latest release directly from upstream instead.
+RUN curl -fsSL https://just.systems/install.sh | bash -s -- --to /usr/local/bin
+
 RUN curl -fsSL \
     "https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64" \
     -o /usr/local/bin/cosign \
     && chmod +x /usr/local/bin/cosign
+
+RUN echo '#!/bin/bash\n\
+just --justfile /workspaces/bluefin-dx-nvidia-open/justfile "$@"' > /usr/local/bin/ujust \
+    && chmod +x /usr/local/bin/ujust
