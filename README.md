@@ -2,6 +2,14 @@
 
 This repository is a custom [bootc](https://github.com/bootc-dev/bootc) image, built on [Bluefin-DX](https://github.com/ublue-os/bluefin).
 
+## Changes made
+
+The following packages were added:
+
+- [Tmux](https://github.com/tmux/tmux)
+- Neovim (and everything for [LazyGit](https://github.com/jesseduffield/lazygit))
+- [Helium Browser](https://github.com/imputnet/helium)
+
 # Community
 
 If you have questions about this template after following the instructions, try the following spaces:
