@@ -12,15 +12,26 @@ cp -avf "/ctx/system_files"/. /
 # List of rpmfusion packages can be found here:
 # https://mirrors.rpmfusion.org/mirrorlist?path=free/fedora/updates/43/x86_64/repoview/index.html&protocol=https&redirect=1
 
-# this installs a package from fedora repos
-dnf5 install -y tmux
+# Install terminal packages
+dnf5 -y copr enable dejan/lazygit
+dnf5 -y install \
+  tmux \
+  neovim \
+  git \
+  lazygit \
+  ripgrep \
+  fd-find \
+  tree-sitter-cli \
+  gcc \
+  gcc-c++ \
+  curl
+dnf5 -y copr disable dejan/lazygit
 
-# Use a COPR Example:
-#
-# dnf5 -y copr enable ublue-os/staging
-# dnf5 -y install package
-# Disable COPRs so they don't end up enabled on the final image:
-# dnf5 -y copr disable ublue-os/staging
+# Install Helium browser
+dnf5 -y copr enable imput/helium
+dnf5 -y install helium-bin
+dnf5 -y copr disable imput/helium
+
 
 #### Example for enabling a System Unit File
 
