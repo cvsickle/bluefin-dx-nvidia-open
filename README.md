@@ -7,7 +7,11 @@ This repository is a custom [bootc](https://github.com/bootc-dev/bootc) image, b
 The following packages were added:
 
 - [Tmux](https://github.com/tmux/tmux)
-- [Neovim](https://github.com/neovim/neovim) (and everything for [LazyGit](https://github.com/jesseduffield/lazygit))
+- Everything needed for [LazyVim](https://github.com/lazyvim/lazyvim)
+  - [Neovim](https://github.com/neovim/neovim)
+  - [LazyGit](https://github.com/jesseduffield/lazygit)
+  - JetBrains Mono Nerd Font from [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts)
+  - Etc.
 - [Helium Browser](https://github.com/imputnet/helium)
 
 # Community
@@ -182,10 +186,20 @@ The `Justfile` contains various commands and configurations for building and man
 
 Container build:
 - [just](https://just.systems/man/en/introduction.html)
-- [podman](https://docs.podman.io/en/latest)
+- [podman](https://docs.podman.io/en/latest) or [docker](https://docs.docker.com/)
 - [jq](https://jqlang.org)
 
 These are usually preinstalled on Universal Blue's Bootc Images.
+
+The `just build` recipe auto-detects which container engine to use: it prefers
+`podman` if it is available, otherwise it falls back to `docker`. You can force
+a specific engine by setting the `CONTAINER_TOOL` environment variable, e.g.
+`CONTAINER_TOOL=docker just build`.
+
+Note: the VM-building and rechunking recipes (`build-qcow2`, `build-raw`,
+`build-iso`, `rebuild-*`, `run-vm-*`, `ostree-rechunk`) rely on podman-specific
+features (rootful/rootless image storage, `--mount=type=image`) and require
+podman regardless of `CONTAINER_TOOL`.
 
 Linting:
 - shfmt
@@ -208,7 +222,7 @@ All these recipes will work (with default values) without supplying any argument
 Builds a container image using Podman.
 
 ```bash
-just build $target_image $tag
+sudo just build $target_image $tag
 ```
 
 Arguments:
