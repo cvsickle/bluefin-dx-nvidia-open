@@ -9,6 +9,10 @@ export image_logo_url := env_var("IMAGE_LOGO_URL")
 export default_tag := env_var("DEFAULT_TAG")
 export bib_image := env_var("BIB_IMAGE")
 
+# Container engine to use for building/running images. Auto-detects podman
+# first, falling back to docker. Override with `CONTAINER_TOOL=docker just ...`
+export container_tool := env_var_or_default("CONTAINER_TOOL", `command -v podman >/dev/null 2>&1 && echo podman || echo docker`)
+
 alias build-vm := build-qcow2
 alias rebuild-vm := rebuild-qcow2
 alias run-vm := run-vm-qcow2
@@ -121,10 +125,18 @@ build $target_image=image_name $tag=default_tag:
     LABELS+=("--label" "org.opencontainers.image.title={{ image_name }}")
     LABELS+=("--label" "org.opencontainers.image.vendor={{ repo_organization }}")
 
-    # This actually builds the image!
-    PODMAN_BUILD_ARGS=("${BUILD_ARGS[@]}" "${LABELS[@]}" --pull=newer --tag "${target_image}:${tag}" --file Containerfile)
+    # podman supports "--pull=newer" to only re-pull when a newer image is
+    # available; docker only supports a boolean --pull flag.
+    if [[ "${container_tool}" == "podman" ]]; then
+        BUILD_ARGS+=(--pull=newer)
+    else
+        BUILD_ARGS+=(--pull)
+    fi
 
-    podman build "${PODMAN_BUILD_ARGS[@]}" .
+    # This actually builds the image!
+    BUILD_ARGS+=("${LABELS[@]}" --tag "${target_image}:${tag}" --file Containerfile)
+
+    "${container_tool}" build "${BUILD_ARGS[@]}" .
 
 # Split the image for smaller updates (New)!
 rechunk $target_image=image_name $tag=default_tag:
@@ -143,9 +155,9 @@ rechunk $target_image=image_name $tag=default_tag:
     CHUNKAH_OUTPUT_DIR="$(mktemp -d ./"${target_image}"_chunkah_XXXXXX)"
 
     trap 'rm -f "${CHUNKAH_CONFIG_FILE}"; rm -rf "${CHUNKAH_OUTPUT_DIR}"' EXIT
-    podman inspect "${target_image}:${tag}" > "${CHUNKAH_CONFIG_FILE}"
+    "${container_tool}" inspect "${target_image}:${tag}" > "${CHUNKAH_CONFIG_FILE}"
 
-    podman run --rm \
+    "${container_tool}" run --rm \
       --mount=type=image,src="${target_image}:${tag}",target=/chunkah \
       -v "${CHUNKAH_CONFIG_FILE}:/chunkah-config.json:ro,Z" \
       -v "${CHUNKAH_OUTPUT_DIR}:/run/out:Z" \
@@ -159,8 +171,8 @@ rechunk $target_image=image_name $tag=default_tag:
       --config /chunkah-config.json \
       --output oci:/run/out/chunked
 
-    CHUNKED_IMAGE="$(podman pull "oci:${CHUNKAH_OUTPUT_DIR}/chunked")"
-    podman tag "${CHUNKED_IMAGE}" "${target_image}:${tag}"
+    CHUNKED_IMAGE="$("${container_tool}" pull "oci:${CHUNKAH_OUTPUT_DIR}/chunked")"
+    "${container_tool}" tag "${CHUNKED_IMAGE}" "${target_image}:${tag}"
 
 # Split the image for smaller updates (Classical)!
 ostree-rechunk $target_image=image_name $tag=default_tag:
@@ -222,16 +234,16 @@ tag-images $target_image=image_name $tag=default_tag tags="":
     set -eoux pipefail
 
     # Get Image, and untag
-    IMAGE=$(podman inspect ${target_image}:${tag} | jq -r .[].Id)
-    podman untag ${IMAGE}
+    IMAGE=$("${container_tool}" inspect ${target_image}:${tag} | jq -r .[].Id)
+    "${container_tool}" untag ${IMAGE} 2>/dev/null || "${container_tool}" rmi "${target_image}:${tag}" 2>/dev/null || true
 
     # Tag Image
     for tag in {{ tags }}; do
-        podman tag $IMAGE "${target_image}:${tag}"
+        "${container_tool}" tag $IMAGE "${target_image}:${tag}"
     done
 
     # Show Images
-    podman images
+    "${container_tool}" images
 
 # Image Name
 [group('Utility')]
@@ -242,6 +254,11 @@ image_name $target_image=image_name:
 
     echo "${image_name}"
 
+# NOTE: The recipes below (_rootful_load_image, _build-bib, _run-vm and the
+# build-qcow2/build-raw/build-iso family) rely on podman-specific features
+# (rootful/rootless image scp, --mount=type=image, rootful container storage)
+# and therefore require podman. They are not supported with docker.
+#
 # Command: _rootful_load_image
 # Description: This script checks if the current user is root or running under sudo. If not, it attempts to resolve the image tag using podman inspect.
 #              If the image is found, it loads it into rootful podman. If the image is not found, it pulls it from the repository.
