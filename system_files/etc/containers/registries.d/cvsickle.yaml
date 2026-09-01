@@ -1,0 +1,3 @@
+docker:
+  ghcr.io/cvsickle/bluefin-dx-nvidia-open:
+    use-sigstore-attachments: true
