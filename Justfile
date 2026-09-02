@@ -9,6 +9,10 @@ export image_logo_url := env_var("IMAGE_LOGO_URL")
 export default_tag := env_var("DEFAULT_TAG")
 export bib_image := env_var("BIB_IMAGE")
 
+export image_license := env_var("IMAGE_LICENSE")
+export maintainer_name := env_var("MAINTAINER_NAME")
+export maintainer_email := env_var("MAINTAINER_EMAIL")
+
 # Container engine to use for building/running images. Auto-detects podman
 # first, falling back to docker. Override with `CONTAINER_TOOL=docker just ...`
 export container_tool := env_var_or_default("CONTAINER_TOOL", `command -v podman >/dev/null 2>&1 && echo podman || echo docker`)
@@ -104,26 +108,35 @@ build $target_image=image_name $tag=default_tag:
 
     BUILD_ARGS=()
     LABELS=()
+
+    # Default to branch-level URLs so required ArtifactHub labels are always present
+    GIT_REF="main"
+    IMAGE_VERSION="{{ default_tag }}.$(date +%Y%m%d)"
     if [[ -z "$(git status -s)" ]]; then
         GIT_SHA=$(git rev-parse --short HEAD)
-        LABELS+=("--label" "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/{{ repo_organization }}/{{ image_name }}/${GIT_SHA}/README.md")
-        LABELS+=("--label" "org.opencontainers.image.documentation=https://raw.githubusercontent.com/{{ repo_organization }}/{{ image_name }}/${GIT_SHA}/README.md")
-        LABELS+=("--label" "org.opencontainers.image.source=https://github.com/{{ repo_organization }}/{{ image_name }}/blob/${GIT_SHA}/Containerfile")
-        LABELS+=("--label" "org.opencontainers.image.url=https://github.com/{{ repo_organization }}/{{ image_name }}/tree/${GIT_SHA}")
-        LABELS+=("--label" "org.opencontainers.image.version={{ default_tag }}.$(date +%Y%m%d)-${GIT_SHA}")
+        GIT_REF="${GIT_SHA}"
+        IMAGE_VERSION="{{ default_tag }}.$(date +%Y%m%d)-${GIT_SHA}"
     fi
+
+    LABELS+=("--label" "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/{{ repo_organization }}/{{ image_name }}/${GIT_REF}/README.md")
+    LABELS+=("--label" "org.opencontainers.image.documentation=https://raw.githubusercontent.com/{{ repo_organization }}/{{ image_name }}/${GIT_REF}/README.md")
+    LABELS+=("--label" "org.opencontainers.image.source=https://github.com/{{ repo_organization }}/{{ image_name }}/blob/${GIT_REF}/Containerfile")
+    LABELS+=("--label" "org.opencontainers.image.url=https://github.com/{{ repo_organization }}/{{ image_name }}/tree/${GIT_REF}")
+    LABELS+=("--label" "org.opencontainers.image.version=${IMAGE_VERSION}")
 
     # Image metadata for https://artifacthub.io/ - This is optional but is highly recommended so we all can get a index of all the custom images
     # The metadata by itself is not going to do anything, you choose if you want your image to be on ArtifactHub or not.
     LABELS+=("--label" "io.artifacthub.package.deprecated=false")
     LABELS+=("--label" "io.artifacthub.package.keywords={{ image_keywords }}")
-    LABELS+=("--label" "io.artifacthub.package.license=Apache-2.0")
+    LABELS+=("--label" "io.artifacthub.package.license={{ image_license }}")
     LABELS+=("--label" "io.artifacthub.package.logo-url={{ image_logo_url }}")
     LABELS+=("--label" "io.artifacthub.package.prerelease=false")
     LABELS+=("--label" "org.opencontainers.image.created=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)")
     LABELS+=("--label" "org.opencontainers.image.description={{ image_desc }}")
     LABELS+=("--label" "org.opencontainers.image.title={{ image_name }}")
     LABELS+=("--label" "org.opencontainers.image.vendor={{ repo_organization }}")
+    LABELS+=("--label" "io.artifacthub.package.maintainers=[{\"name\":\"{{ maintainer_name }}\",\"email\":\"{{ maintainer_email }}\"}]")
+    LABELS+=("--label" "org.opencontainers.image.licenses={{ image_license }}")
 
     # podman supports "--pull=newer" to only re-pull when a newer image is
     # available; docker only supports a boolean --pull flag.
@@ -475,3 +488,17 @@ format:
     fi
     # Run shfmt on all Bash scripts
     find . -iname "*.sh" -type f -exec shfmt --write "{}" ';'
+
+# Publish ArtifactHub repository metadata (ownership / verified publisher)
+[group('Utility')]
+publish-artifacthub-metadata $registry=("ghcr.io/" + repo_organization):
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ ! -f artifacthub-repo.yml ]]; then
+        echo "artifacthub-repo.yml not found in $(pwd)" >&2
+        exit 1
+    fi
+    oras push \
+      "${registry}/{{ image_name }}:artifacthub.io" \
+      --config /dev/null:application/vnd.cncf.artifacthub.config.v1+yaml \
+      artifacthub-repo.yml:application/vnd.cncf.artifacthub.repository-metadata.layer.v1.yaml
