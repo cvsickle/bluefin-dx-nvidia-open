@@ -44,3 +44,9 @@ systemctl reboot
 ```bash
 sudo bootc switch --enforce-container-policy ghcr.io/cvsickle/bluefin-dx-nvidia-open:latest
 ```
+
+## Repository Mirrors
+
+- GitHub - [https://github.com/cvsickle/bluefin-dx-nvidia-open](https://github.com/cvsickle/bluefin-dx-nvidia-open)
+- Codeberg - [https://codeberg.org/cvsickle/bluefin-dx-nvidia-open](https://codeberg.org/cvsickle/bluefin-dx-nvidia-open)
+- Forgejo (Mirror) - [https://git.cvsickle.com/cvsickle/bluefin-dx-nvidia-open](https://git.cvsickle.com/cvsickle/bluefin-dx-nvidia-open)
