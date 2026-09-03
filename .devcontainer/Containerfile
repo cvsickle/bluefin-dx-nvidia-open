@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     ca-certificates \
     gnupg \
     bash-completion \
+    skopeo \
     && rm -rf /var/lib/apt/lists/*
 
 # The apt-provided `just` package on Ubuntu 24.04 is too old (1.21.x) to
