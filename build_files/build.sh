@@ -31,6 +31,19 @@ dnf5 -y install \
   xz
 dnf5 -y copr disable dejan/lazygit
 
+# Install Catppuccin GTK themes system-wide.
+theme_dir="/usr/share/themes"
+catppuccin_version="v1.0.1"
+catppuccin_archive="Catppuccin.tar.xz"
+catppuccin_url="https://github.com/Fausto-Korpsvart/Catppuccin-GTK-Theme/releases/download/${catppuccin_version}/${catppuccin_archive}"
+catppuccin_sha256="5281b4e3d387cc14bac96c8ee20ee276209b582470f9771c15d94855f1713f81"
+
+curl -fL --retry 3 -o "/tmp/${catppuccin_archive}" "${catppuccin_url}"
+printf '%s  %s\n' "${catppuccin_sha256}" "/tmp/${catppuccin_archive}" | sha256sum -c -
+install -d "${theme_dir}"
+tar -xJf "/tmp/${catppuccin_archive}" -C "${theme_dir}"
+rm -f "/tmp/${catppuccin_archive}"
+
 # Install JetBrains Mono Nerd Font from the official Nerd Fonts release.
 font_archive="JetBrainsMono.tar.xz"
 font_url="https://github.com/ryanoasis/nerd-fonts/releases/latest/download/${font_archive}"

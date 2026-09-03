@@ -6,6 +6,18 @@
 
   "rebaseWhen": "never",
 
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["(^|/)build_files/build\\.sh$"],
+      "matchStrings": [
+        "catppuccin_version=\"(?<currentValue>v[0-9]+\\.[0-9]+\\.[0-9]+)\""
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "Fausto-Korpsvart/Catppuccin-GTK-Theme"
+    }
+  ],
+
   "packageRules": [
     {
       "automerge": true,
