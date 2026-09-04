@@ -5,6 +5,14 @@ set -ouex pipefail
 # Copy the contents of system_files/ of the git repo to /
 cp -avf "/ctx/system_files"/. /
 
+# Set the operating system identity shown by bootc and the boot menu.
+image_version="$(date -u +%Y%m%d)"
+sed -i \
+  -e 's/^NAME=.*/NAME="CVSickle Bluefin DX"/' \
+  -e "s/^VERSION=.*/VERSION=\"${image_version}\"/" \
+  -e "s/^PRETTY_NAME=.*/PRETTY_NAME=\"CVSickle Bluefin DX (${image_version})\"/" \
+  /usr/lib/os-release
+
 ### Install packages
 
 # Packages can be installed from any enabled yum repo on the image.
