@@ -4,10 +4,6 @@ set -ouex pipefail
 
 # Copy the contents of system_files/ of the git repo to /
 cp -avf "/ctx/system_files"/. /
-chmod 0755 /usr/libexec/sync-gtk4-theme
-install -d /etc/systemd/user/default.target.wants
-ln -sfn /usr/lib/systemd/user/sync-gtk4-theme.service \
-  /etc/systemd/user/default.target.wants/sync-gtk4-theme.service
 
 ### Install packages
 
@@ -34,19 +30,6 @@ dnf5 -y install \
   unzip \
   xz
 dnf5 -y copr disable dejan/lazygit
-
-# Install Catppuccin GTK themes system-wide.
-theme_dir="/usr/share/themes"
-catppuccin_version="v1.0.1"
-catppuccin_sha256="5281b4e3d387cc14bac96c8ee20ee276209b582470f9771c15d94855f1713f81"
-catppuccin_archive="Catppuccin.tar.xz"
-catppuccin_url="https://github.com/Fausto-Korpsvart/Catppuccin-GTK-Theme/releases/download/${catppuccin_version}/${catppuccin_archive}"
-
-curl -fL --retry 3 -o "/tmp/${catppuccin_archive}" "${catppuccin_url}"
-printf '%s  %s\n' "${catppuccin_sha256}" "/tmp/${catppuccin_archive}" | sha256sum -c -
-install -d "${theme_dir}"
-tar -xJf "/tmp/${catppuccin_archive}" -C "${theme_dir}"
-rm -f "/tmp/${catppuccin_archive}"
 
 # Install JetBrains Mono Nerd Font from the official Nerd Fonts release.
 font_dir="/usr/share/fonts/jetbrains-mono-nerd-fonts"
