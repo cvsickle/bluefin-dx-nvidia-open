@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -euo pipefail
+
+config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-4.0"
+theme_root="/usr/share/themes"
+
+remove_theme_link() {
+    local path="$1"
+    local target
+
+    if [[ -L "${path}" ]]; then
+        target="$(readlink "${path}")"
+        if [[ "${target}" == "${theme_root}/"* ]]; then
+            rm -f "${path}"
+        fi
+    fi
+}
+
+sync_theme() {
+    local theme_name="$1"
+    local theme_dir="${theme_root}/${theme_name}/gtk-4.0"
+
+    install -d "${config_dir}"
+
+    if [[ ! -d "${theme_dir}" ]]; then
+        remove_theme_link "${config_dir}/assets"
+        remove_theme_link "${config_dir}/gtk.css"
+        remove_theme_link "${config_dir}/gtk-dark.css"
+        return 0
+    fi
+
+    for item in assets gtk.css gtk-dark.css; do
+        if [[ -e "${theme_dir}/${item}" ]]; then
+            ln -sfn "${theme_dir}/${item}" "${config_dir}/${item}"
+        else
+            remove_theme_link "${config_dir}/${item}"
+        fi
+    done
+}
+
+sync_theme "$(gsettings get org.gnome.desktop.interface gtk-theme | sed "s/^'//; s/'$//")"
+gsettings monitor org.gnome.desktop.interface gtk-theme | while IFS= read -r value; do
+    sync_theme "$(sed "s/^'//; s/'$//" <<<"${value}")"
+done
