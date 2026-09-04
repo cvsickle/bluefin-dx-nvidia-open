@@ -28,7 +28,9 @@ dnf5 -y install \
   curl \
   make \
   unzip \
-  xz
+  xz \
+  sassc \
+  sass
 dnf5 -y copr disable dejan/lazygit
 
 # Install JetBrains Mono Nerd Font from the official Nerd Fonts release.
