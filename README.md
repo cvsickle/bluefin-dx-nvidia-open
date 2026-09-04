@@ -1,5 +1,7 @@
 # Bluefin DX (Nvidia)
 
+[![Build container image](https://github.com/cvsickle/bluefin-dx-nvidia-open/actions/workflows/build.yml/badge.svg)](https://github.com/cvsickle/bluefin-dx-nvidia-open/actions/workflows/build.yml) [![Dependabot Updates](https://github.com/cvsickle/bluefin-dx-nvidia-open/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/cvsickle/bluefin-dx-nvidia-open/actions/workflows/dependabot/dependabot-updates) [![Repo sync (GitHub -> Codeberg)](https://github.com/cvsickle/bluefin-dx-nvidia-open/actions/workflows/sync_codeberg.yaml/badge.svg)](https://github.com/cvsickle/bluefin-dx-nvidia-open/actions/workflows/sync_codeberg.yaml)
+
 This repository is a custom [bootc](https://github.com/bootc-dev/bootc) image, built on [Bluefin-DX](https://github.com/ublue-os/bluefin).
 
 This repository is based on the [ublue-os/image-template](https://github.com/ublue-os/image-template) repo. See there for information on how to create your own.

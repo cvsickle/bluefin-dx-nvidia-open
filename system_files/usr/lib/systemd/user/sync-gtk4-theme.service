@@ -1,0 +1,11 @@
+[Unit]
+Description=Sync GTK4 theme with GNOME GTK theme setting
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/libexec/sync-gtk4-theme
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

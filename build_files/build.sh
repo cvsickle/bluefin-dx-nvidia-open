@@ -4,6 +4,10 @@ set -ouex pipefail
 
 # Copy the contents of system_files/ of the git repo to /
 cp -avf "/ctx/system_files"/. /
+chmod 0755 /usr/libexec/sync-gtk4-theme
+install -d /etc/systemd/user/default.target.wants
+ln -sfn /usr/lib/systemd/user/sync-gtk4-theme.service \
+  /etc/systemd/user/default.target.wants/sync-gtk4-theme.service
 
 ### Install packages
 
