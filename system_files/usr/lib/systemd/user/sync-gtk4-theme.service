@@ -4,7 +4,7 @@ After=graphical-session.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/sync-gtk4-theme
+ExecStart=/usr/libexec/sync-gtk4-theme
 Restart=on-failure
 
 [Install]
