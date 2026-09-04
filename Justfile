@@ -111,6 +111,7 @@ build $target_image=image_name $tag=default_tag:
 
     # Default to branch-level URLs so required ArtifactHub labels are always present
     GIT_REF="main"
+    ANNOTATIONS=()
     IMAGE_VERSION="{{ default_tag }}.$(date +%Y%m%d)"
     if [[ -z "$(git status -s)" ]]; then
         GIT_SHA=$(git rev-parse --short HEAD)
@@ -137,6 +138,23 @@ build $target_image=image_name $tag=default_tag:
     LABELS+=("--label" "org.opencontainers.image.vendor={{ repo_organization }}")
     LABELS+=("--label" "io.artifacthub.package.maintainers=[{\"name\":\"{{ maintainer_name }}\",\"email\":\"{{ maintainer_email }}\"}]")
     LABELS+=("--label" "org.opencontainers.image.licenses={{ image_license }}")
+    # Artifact Hub gives manifest annotations precedence over config labels.
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.deprecated=false")
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.keywords={{ image_keywords }}")
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.license={{ image_license }}")
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.logo-url={{ image_logo_url }}")
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.maintainers=[{\"name\":\"{{ maintainer_name }}\",\"email\":\"{{ maintainer_email }}\"}]")
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.prerelease=false")
+    ANNOTATIONS+=("--annotation" "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/{{ repo_organization }}/{{ image_name }}/${GIT_REF}/README.md")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.created=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.description={{ image_desc }}")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.documentation=https://raw.githubusercontent.com/{{ repo_organization }}/{{ image_name }}/${GIT_REF}/README.md")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.licenses={{ image_license }}")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.source=https://github.com/{{ repo_organization }}/{{ image_name }}/blob/${GIT_REF}/Containerfile")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.title={{ image_name }}")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.url=https://github.com/{{ repo_organization }}/{{ image_name }}/tree/${GIT_REF}")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.vendor={{ repo_organization }}")
+    ANNOTATIONS+=("--annotation" "org.opencontainers.image.version=${IMAGE_VERSION}")
 
     # podman supports "--pull=newer" to only re-pull when a newer image is
     # available; docker only supports a boolean --pull flag.
@@ -147,6 +165,9 @@ build $target_image=image_name $tag=default_tag:
     fi
 
     # This actually builds the image!
+    if [[ "${container_tool}" == "podman" ]]; then
+        BUILD_ARGS+=("${ANNOTATIONS[@]}")
+    fi
     BUILD_ARGS+=("${LABELS[@]}" --tag "${target_image}:${tag}" --file Containerfile)
 
     "${container_tool}" build "${BUILD_ARGS[@]}" .
