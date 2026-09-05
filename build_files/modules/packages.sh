@@ -31,6 +31,9 @@ dnf5 -y install \
   sass \
   helium-bin
 
+# Swap packages
+dnf5 -y swap tuned-ppd power-profiles-daemon
+
 # Remove unnecessary packages
 dnf5 -y remove \
   gnome-tour \

@@ -19,6 +19,7 @@ The following packages were added:
   - Etc.
 - [Helium Browser](https://github.com/imputnet/helium)
 - Dependencies for [Fausto-Korpsvart](https://github.com/Fausto-Korpsvart) themes.
+- Swapped tuned-ppd for power-profiles-daemon for optimation on Framework 13 Pro. See the [Phoronix writeup](https://www.phoronix.com/review/fedora-pantherlake-thermald-tuned).
 
 ## Installation
 
