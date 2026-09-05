@@ -32,3 +32,8 @@ dnf5 -y install \
 dnf5 -y copr disable \
   dejan/lazygit \
   imput/helium
+
+# Remove unnecessary packages
+dnf5 -y remove \
+  gnome-tour \
+  malcontent-control
