@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Lazydocker
+Comment=Terminal UI for Docker and Podman
+Icon=@ICONS@/podman.svg
+TryExec=@BINDIR@/lazydocker
+Exec=@BINDIR@/lazydocker
+Terminal=true
+StartupNotify=false
+Categories=Development;
+Keywords=docker;podman;containers;terminal;compose;

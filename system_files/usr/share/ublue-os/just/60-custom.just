@@ -1,9 +1,12 @@
+# vim: set ft=make :
 # 60-custom.just
 
+CVSICKLE_SHARE := "/usr/share/cvsickle"
+
 # Install CVSickle curated app set.
+[group('Apps')]
 install-cvsickle-apps:
     #!/usr/bin/bash
-    source /usr/lib/ujust/ujust.sh
     set -euo pipefail
 
     if ! command -v brew >/dev/null 2>&1; then
@@ -12,56 +15,55 @@ install-cvsickle-apps:
         exit 1
     fi
 
+    BINDIR="$(dirname "$(command -v brew)")"
     APPS_DIR="${HOME}/.local/share/applications"
     ICONS_DIR="${HOME}/.local/share/icons"
+    SRC="{{ CVSICKLE_SHARE }}"
+
     mkdir -p "${APPS_DIR}" "${ICONS_DIR}"
 
-    echo "Installing lazydocker..."
-    brew install jesseduffield/lazydocker/lazydocker
+    while IFS=':' read -r pkg desktop icon; do
+        [[ -z "${pkg}" || "${pkg}" =~ ^[[:space:]]*# ]] && continue
 
-    LAZYDOCKER_BIN="$(command -v lazydocker)"
+        echo "Installing ${pkg}..."
+        brew install "${pkg}"
 
-    echo "Downloading icon..."
-    curl -fsSL --retry 3 \
-        "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/podman.svg" \
-        -o "${ICONS_DIR}/podman.svg"
+        install -m 0644 "${SRC}/icons/${icon}" "${ICONS_DIR}/${icon}"
 
-    echo "Writing desktop entry..."
-    cat > "${APPS_DIR}/lazydocker.desktop" <<EOF
-    [Desktop Entry]
-    Type=Application
-    Name=Lazydocker
-    Comment=Terminal UI for Docker and Podman
-    Icon=${ICONS_DIR}/podman.svg
-    TryExec=${LAZYDOCKER_BIN}
-    Exec=${LAZYDOCKER_BIN}
-    Terminal=true
-    Categories=Development;
-    StartupNotify=false
-    Keywords=docker;podman;containers;terminal;compose;
-    EOF
+        sed -e "s|@BINDIR@|${BINDIR}|g" \
+            -e "s|@ICONS@|${ICONS_DIR}|g" \
+            "${SRC}/applications/${desktop}" > "${APPS_DIR}/${desktop}"
+        chmod 0644 "${APPS_DIR}/${desktop}"
+    done < "${SRC}/apps.list"
 
-    update-desktop-database "${APPS_DIR}" || true
+    update-desktop-database "${APPS_DIR}" 2>/dev/null || true
     echo "Done."
 
 # Remove cvsickle's curated app set
+[group('Apps')]
 uninstall-cvsickle-apps:
     #!/usr/bin/bash
-    source /usr/lib/ujust/ujust.sh
     set -euo pipefail
 
     APPS_DIR="${HOME}/.local/share/applications"
     ICONS_DIR="${HOME}/.local/share/icons"
+    SRC="{{ CVSICKLE_SHARE }}"
 
-    CONFIRM=$(ugum choose "Yes" "No" --header "Remove cvsickle apps and their launchers?")
-    [[ "${CONFIRM}" == "Yes" ]] || exit 0
+    read -rp "Remove cvsickle apps and their launchers? [y/N] " reply
+    case "${reply}" in
+        [yY]|[yY][eE][sS]) ;;
+        *) echo "Cancelled."; exit 0 ;;
+    esac
 
-    if command -v brew >/dev/null 2>&1; then
-        brew uninstall jesseduffield/lazydocker/lazydocker || true
-    fi
+    while IFS=':' read -r pkg desktop icon; do
+        [[ -z "${pkg}" || "${pkg}" =~ ^[[:space:]]*# ]] && continue
 
-    rm -f "${APPS_DIR}/lazydocker.desktop"
-    rm -f "${ICONS_DIR}/Podman.svg"
+        if command -v brew >/dev/null 2>&1; then
+            brew uninstall "${pkg}" || true
+        fi
 
-    update-desktop-database "${APPS_DIR}" || true
+        rm -f "${APPS_DIR}/${desktop}" "${ICONS_DIR}/${icon}"
+    done < "${SRC}/apps.list"
+
+    update-desktop-database "${APPS_DIR}" 2>/dev/null || true
     echo "Removed."
