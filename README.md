@@ -18,13 +18,19 @@ The following packages were added:
   - JetBrains Mono Nerd Font from [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts)
   - Etc.
 - [Helium Browser](https://github.com/imputnet/helium)
+- [Kitty](https://github.com/kovidgoyal/kitty). My favorite terminal emulator.
 - Dependencies for [Fausto-Korpsvart](https://github.com/Fausto-Korpsvart) themes.
+- Package dependencies for [Yazi](https://github.com/sxyazi/yazi). (Some dependencies should be installed with brew, which is part of `ujust install-cvsickle-apps`)
 - Swapped tuned-ppd for power-profiles-daemon for optimation on Framework 13 Pro. See the [Phoronix writeup](https://www.phoronix.com/review/fedora-pantherlake-thermald-tuned).
 
 The following ujust recipes were added:
 
 - install-cvsickle-apps
   - Installs any recommended brew or flatpack applications.
+  - Includes:
+    - [LazyDocker](https://github.com/jesseduffield/lazydocker)
+    - [Yazi](https://github.com/sxyazi/yazi)
+  - Sets the default terminal to kitty, unless one has already been set.
 - uninstall-cvsickle-apps
   - Removes the recommended brew or flatpack applications.
 
