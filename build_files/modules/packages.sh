@@ -10,6 +10,7 @@ set -ouex pipefail
 # Enable copr repos
 dnf5 -y copr enable dejan/lazygit
 dnf5 -y copr enable imput/helium
+dnf5 -y copr enable lihaohong/yazi
 
 # Install packages
 dnf5 -y install \
@@ -30,9 +31,12 @@ dnf5 -y install \
   sassc \
   sass \
   helium-bin \
+  kitty \
   poppler \
+  resvg \
   wl-clipboard \
-  xclip
+  xclip \
+  yazi
 
 # Swap packages
 dnf5 -y swap tuned-ppd power-profiles-daemon
@@ -45,3 +49,4 @@ dnf5 -y remove \
 # Disable copr repos
 dnf5 -y copr disable dejan/lazygit
 dnf5 -y copr disable imput/helium
+dnf5 -y copr disable lihaohong/yazi
