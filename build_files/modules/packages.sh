@@ -30,6 +30,7 @@ dnf5 -y install \
   sassc \
   sass \
   helium-bin \
+  poppler \
   wl-clipboard \
   xclip
 
