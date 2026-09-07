@@ -63,6 +63,16 @@ systemctl reboot
 sudo bootc switch --enforce-container-sigpolicy ghcr.io/cvsickle/bluefin-dx-nvidia-open:latest
 ```
 
+- If the boot loader menu entries are still showing the upstream image name, force them to update.
+
+```bash
+sudo rpm-ostree kargs --append=bls.refresh=1
+systemctl reboot
+
+sudo rpm-ostree kargs --delete=bls.refresh=1
+systemctl reboot
+```
+
 ## Recommended GTK Theming
 
 Want to make your apps look less gray? Check out the [theming instructions](./docs/themes.md).
