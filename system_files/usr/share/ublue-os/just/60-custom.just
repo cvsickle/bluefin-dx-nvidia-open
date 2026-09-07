@@ -34,7 +34,7 @@ install-cvsickle-apps:
             -e "s|@ICONS@|${ICONS_DIR}|g" \
             "${SRC}/applications/${desktop}" > "${APPS_DIR}/${desktop}"
         chmod 0644 "${APPS_DIR}/${desktop}"
-    done < "${SRC}/apps.list"
+    done < "${SRC}/brew.list"
 
     update-desktop-database "${APPS_DIR}" 2>/dev/null || true
     echo "Done."
@@ -63,7 +63,7 @@ uninstall-cvsickle-apps:
         fi
 
         rm -f "${APPS_DIR}/${desktop}" "${ICONS_DIR}/${icon}"
-    done < "${SRC}/apps.list"
+    done < "${SRC}/brew.list"
 
     update-desktop-database "${APPS_DIR}" 2>/dev/null || true
     echo "Removed."
