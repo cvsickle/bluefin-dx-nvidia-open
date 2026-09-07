@@ -14,6 +14,7 @@ dnf5 -y copr enable lihaohong/yazi
 
 # Install packages
 dnf5 -y install \
+  kitty \
   tmux \
   neovim \
   git \
@@ -31,12 +32,9 @@ dnf5 -y install \
   sassc \
   sass \
   helium-bin \
-  kitty \
   poppler \
-  resvg \
   wl-clipboard \
-  xclip \
-  yazi
+  xclip
 
 # Swap packages
 dnf5 -y swap tuned-ppd power-profiles-daemon
