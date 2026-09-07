@@ -29,7 +29,9 @@ dnf5 -y install \
   xz \
   sassc \
   sass \
-  helium-bin
+  helium-bin \
+  wl-clipboard \
+  xclip
 
 # Swap packages
 dnf5 -y swap tuned-ppd power-profiles-daemon
