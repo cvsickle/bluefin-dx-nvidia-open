@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Yazi
+Comment=Blazing Fast Terminal File Manager
+Icon=@ICONS@/yazi.png
+TryExec=@BINDIR@/yazi
+Exec=@BINDIR@/yazi
+Terminal=true
+StartupNotify=false
+Keywords=file;manager;browser;terminal;browsing;
