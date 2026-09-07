@@ -1,2 +1,6 @@
 # brew-package : desktop-file : icon-file
 jesseduffield/lazydocker/lazydocker:lazydocker.desktop:podman.svg
+poppler
+resvg
+imagemagick
+yazi:yazi.desktop:yazi.png
