@@ -19,14 +19,22 @@ install-cvsickle-apps:
     APPS_DIR="${HOME}/.local/share/applications"
     ICONS_DIR="${HOME}/.local/share/icons"
     SRC="{{ CVSICKLE_SHARE }}"
+    XDG_TERMINALS="${HOME}/.config/xdg-terminals.list"
+
+    if [[ ! -e "${XDG_TERMINALS}" ]]; then
+        echo "Setting default terminal..."
+        mkdir -p "${HOME}/.config"
+        printf 'kitty.desktop\n' > "${XDG_TERMINALS}"
+        echo "Default terminal set to kitty. You can change this by editing ${XDG_TERMINALS}."
+    fi
 
     if [[ ! -r "${SRC}/brew.list" ]]; then
         echo "Cannot read ${SRC}/brew.list" >&2
         exit 1
     fi
 
+    echo "Installing brew apps..."
     mkdir -p "${APPS_DIR}" "${ICONS_DIR}"
-
     mapfile -t ENTRIES < "${SRC}/brew.list"
 
     pkg_count=0
