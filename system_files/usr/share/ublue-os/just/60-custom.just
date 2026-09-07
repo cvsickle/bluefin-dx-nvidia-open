@@ -20,13 +20,37 @@ install-cvsickle-apps:
     ICONS_DIR="${HOME}/.local/share/icons"
     SRC="{{ CVSICKLE_SHARE }}"
 
+    if [[ ! -r "${SRC}/brew.list" ]]; then
+        echo "Cannot read ${SRC}/brew.list" >&2
+        exit 1
+    fi
+
     mkdir -p "${APPS_DIR}" "${ICONS_DIR}"
 
-    while IFS=':' read -r pkg desktop icon; do
-        [[ -z "${pkg}" || "${pkg}" =~ ^[[:space:]]*# ]] && continue
+    mapfile -t ENTRIES < "${SRC}/brew.list"
+
+    pkg_count=0
+    app_count=0
+
+    for entry in "${ENTRIES[@]}"; do
+        entry="${entry%$'\r'}"
+        [[ -z "${entry//[[:space:]]/}" || "${entry}" =~ ^[[:space:]]*# ]] && continue
+
+        IFS=':' read -r pkg desktop icon <<< "${entry}"
+        pkg="${pkg//[[:space:]]/}"
+        desktop="${desktop//[[:space:]]/}"
+        icon="${icon//[[:space:]]/}"
+
+        [[ -z "${pkg}" ]] && continue
 
         echo "Installing ${pkg}..."
         brew install "${pkg}"
+        (( ++pkg_count ))
+
+        # Skip menu/icon installation if desktop or icon fields are empty
+        if [[ -z "${desktop}" || -z "${icon}" ]]; then
+            continue
+        fi
 
         install -m 0644 "${SRC}/icons/${icon}" "${ICONS_DIR}/${icon}"
 
@@ -34,10 +58,11 @@ install-cvsickle-apps:
             -e "s|@ICONS@|${ICONS_DIR}|g" \
             "${SRC}/applications/${desktop}" > "${APPS_DIR}/${desktop}"
         chmod 0644 "${APPS_DIR}/${desktop}"
-    done < "${SRC}/brew.list"
+        (( ++app_count ))
+    done
 
     update-desktop-database "${APPS_DIR}" 2>/dev/null || true
-    echo "Done."
+    echo "Done. ${pkg_count} package(s) installed, ${app_count} launcher(s) created."
 
 # Remove cvsickle's curated app set
 [group('Apps')]
@@ -49,21 +74,41 @@ uninstall-cvsickle-apps:
     ICONS_DIR="${HOME}/.local/share/icons"
     SRC="{{ CVSICKLE_SHARE }}"
 
+    if [[ ! -r "${SRC}/brew.list" ]]; then
+        echo "Cannot read ${SRC}/brew.list" >&2
+        exit 1
+    fi
+
     read -rp "Remove cvsickle apps and their launchers? [y/N] " reply
     case "${reply}" in
         [yY]|[yY][eE][sS]) ;;
         *) echo "Cancelled."; exit 0 ;;
     esac
 
-    while IFS=':' read -r pkg desktop icon; do
-        [[ -z "${pkg}" || "${pkg}" =~ ^[[:space:]]*# ]] && continue
+    mapfile -t ENTRIES < "${SRC}/brew.list"
+
+    for entry in "${ENTRIES[@]}"; do
+        entry="${entry%$'\r'}"
+        [[ -z "${entry//[[:space:]]/}" || "${entry}" =~ ^[[:space:]]*# ]] && continue
+
+        IFS=':' read -r pkg desktop icon <<< "${entry}"
+        pkg="${pkg//[[:space:]]/}"
+        desktop="${desktop//[[:space:]]/}"
+        icon="${icon//[[:space:]]/}"
+
+        [[ -z "${pkg}" ]] && continue
 
         if command -v brew >/dev/null 2>&1; then
             brew uninstall "${pkg}" || true
         fi
 
+        # Skip menu/icon removal if desktop or icon fields are empty
+        if [[ -z "${desktop}" || -z "${icon}" ]]; then
+            continue
+        fi
+
         rm -f "${APPS_DIR}/${desktop}" "${ICONS_DIR}/${icon}"
-    done < "${SRC}/brew.list"
+    done
 
     update-desktop-database "${APPS_DIR}" 2>/dev/null || true
     echo "Removed."
