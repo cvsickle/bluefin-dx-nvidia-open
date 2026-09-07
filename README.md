@@ -9,7 +9,7 @@ This repository is based on the [ublue-os/image-template](https://github.com/ubl
 
 ## Changes made
 
-The following packages were added:
+### Packages Installed
 
 - [Tmux](https://github.com/tmux/tmux)
 - Everything needed for [LazyVim](https://github.com/lazyvim/lazyvim)
@@ -21,17 +21,22 @@ The following packages were added:
 - [Kitty](https://github.com/kovidgoyal/kitty). My favorite terminal emulator.
 - Dependencies for [Fausto-Korpsvart](https://github.com/Fausto-Korpsvart) themes.
 - Package dependencies for [Yazi](https://github.com/sxyazi/yazi). (Some dependencies should be installed with brew, which is part of `ujust install-cvsickle-apps`)
-- Swapped tuned-ppd for power-profiles-daemon for optimation on Framework 13 Pro. See the [Phoronix writeup](https://www.phoronix.com/review/fedora-pantherlake-thermald-tuned).
+- Swapped tuned-ppd for power-profiles-daemon for optimization on Framework 13 Pro. See the [Phoronix writeup](https://www.phoronix.com/review/fedora-pantherlake-thermald-tuned).
 
-The following ujust recipes were added:
+### Packages Removed
 
-- install-cvsickle-apps
+- gnome-tour
+- malcontent-control
+
+### ujust recipes
+
+- `install-cvsickle-apps`
   - Installs any recommended brew or flatpack applications.
   - Includes:
     - [LazyDocker](https://github.com/jesseduffield/lazydocker)
     - [Yazi](https://github.com/sxyazi/yazi)
   - Sets the default terminal to kitty, unless one has already been set.
-- uninstall-cvsickle-apps
+- `uninstall-cvsickle-apps`
   - Removes the recommended brew or flatpack applications.
 
 ## Installation
