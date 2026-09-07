@@ -31,6 +31,7 @@ dnf5 -y install \
   xz \
   sassc \
   sass \
+  gtk-murrine-engine \
   helium-bin \
   poppler \
   wl-clipboard \
