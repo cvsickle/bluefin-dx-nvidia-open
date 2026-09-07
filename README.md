@@ -21,6 +21,13 @@ The following packages were added:
 - Dependencies for [Fausto-Korpsvart](https://github.com/Fausto-Korpsvart) themes.
 - Swapped tuned-ppd for power-profiles-daemon for optimation on Framework 13 Pro. See the [Phoronix writeup](https://www.phoronix.com/review/fedora-pantherlake-thermald-tuned).
 
+The following ujust recipes were added:
+
+- install-cvsickle-apps
+  - Installs any recommended brew or flatpack applications.
+- uninstall-cvsickle-apps
+  - Removes the recommended brew or flatpack applications.
+
 ## Installation
 
 Here is the recommened installation process.
