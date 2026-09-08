@@ -33,6 +33,7 @@ dnf5 -y install \
   sass \
   gtk-murrine-engine \
   helium-bin \
+  breeze-cursor-theme \
   poppler \
   wl-clipboard \
   xclip
