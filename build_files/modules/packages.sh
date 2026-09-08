@@ -32,6 +32,7 @@ dnf5 -y install \
   sassc \
   sass \
   gtk-murrine-engine \
+  gnome-themes-extra \
   helium-bin \
   breeze-cursor-theme \
   poppler \
