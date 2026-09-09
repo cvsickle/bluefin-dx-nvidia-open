@@ -10,36 +10,24 @@ set -ouex pipefail
 # Enable copr repos
 dnf5 -y copr enable dejan/lazygit
 dnf5 -y copr enable imput/helium
-dnf5 -y copr enable lihaohong/yazi
 
 # Install packages
 dnf5 -y install \
   kitty \
-  tmux \
   neovim \
-  git \
   lazygit \
   tree-sitter-cli \
-  fzf \
   ripgrep \
   fd-find \
-  gcc \
-  gcc-c++ \
-  curl \
-  make \
-  unzip \
-  xz \
   sassc \
   sass \
   gtk-murrine-engine \
   helium-bin \
-  breeze-cursor-theme \
-  poppler \
-  wl-clipboard \
-  xclip
+  breeze-cursor-theme
 
 # Swap packages
-dnf5 -y swap tuned-ppd power-profiles-daemon
+## Framework 13 Pro Optimization
+## dnf5 -y swap tuned-ppd power-profiles-daemon
 
 # Remove unnecessary packages
 dnf5 -y remove \
@@ -49,4 +37,3 @@ dnf5 -y remove \
 # Disable copr repos
 dnf5 -y copr disable dejan/lazygit
 dnf5 -y copr disable imput/helium
-dnf5 -y copr disable lihaohong/yazi

@@ -11,17 +11,14 @@ This repository is based on the [ublue-os/image-template](https://github.com/ubl
 
 ### Packages Installed
 
-- [Tmux](https://github.com/tmux/tmux)
 - Everything needed for [LazyVim](https://github.com/lazyvim/lazyvim)
   - [Neovim](https://github.com/neovim/neovim)
   - [LazyGit](https://github.com/jesseduffield/lazygit)
   - JetBrains Mono Nerd Font from [ryanoasis/nerd-fonts](https://github.com/ryanoasis/nerd-fonts)
   - Etc.
 - [Helium Browser](https://github.com/imputnet/helium)
-- [Kitty](https://github.com/kovidgoyal/kitty). My favorite terminal emulator.
+- [Kitty](https://github.com/kovidgoyal/kitty)
 - Dependencies for [Fausto-Korpsvart](https://github.com/Fausto-Korpsvart) themes.
-- Package dependencies for [Yazi](https://github.com/sxyazi/yazi). (Some dependencies should be installed with brew, which is part of `ujust install-cvsickle-apps`)
-- Swapped tuned-ppd for power-profiles-daemon for optimization on Framework 13 Pro. See the [Phoronix writeup](https://www.phoronix.com/review/fedora-pantherlake-thermald-tuned).
 
 ### Packages Removed
 
@@ -34,8 +31,7 @@ This repository is based on the [ublue-os/image-template](https://github.com/ubl
   - Installs any recommended brew or flatpack applications.
   - Includes:
     - [LazyDocker](https://github.com/jesseduffield/lazydocker)
-    - [Yazi](https://github.com/sxyazi/yazi)
-  - Sets the default terminal to kitty, unless one has already been set.
+    - [Dev Container CLI](https://github.com/devcontainers/cli)
 - `uninstall-cvsickle-apps`
   - Removes the recommended brew or flatpack applications.
 
