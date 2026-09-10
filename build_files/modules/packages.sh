@@ -23,7 +23,8 @@ dnf5 -y install \
   sass \
   gtk-murrine-engine \
   helium-bin \
-  breeze-cursor-theme
+  breeze-cursor-theme \
+  easyeffects
 
 # Swap packages
 ## Framework 13 Pro Optimization
