@@ -23,8 +23,7 @@ dnf5 -y install \
   sass \
   gtk-murrine-engine \
   helium-bin \
-  breeze-cursor-theme \
-  easyeffects
+  breeze-cursor-theme
 
 # Swap packages
 ## Framework 13 Pro Optimization
@@ -38,3 +37,6 @@ dnf5 -y remove \
 # Disable copr repos
 dnf5 -y copr disable dejan/lazygit
 dnf5 -y copr disable imput/helium
+
+# Purge dnf cache
+dnf5 clean all
