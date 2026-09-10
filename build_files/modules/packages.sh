@@ -24,8 +24,7 @@ dnf5 -y install \
   gtk-murrine-engine \
   helium-bin \
   breeze-cursor-theme \
-  easyeffects \
-  webkit2gtk4.1
+  easyeffects
 
 # Swap packages
 ## Framework 13 Pro Optimization
